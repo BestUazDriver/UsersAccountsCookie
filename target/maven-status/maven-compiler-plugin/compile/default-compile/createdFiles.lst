@@ -1,1 +1,5 @@
+com\sabitov\filters\UserFilter.class
+com\sabitov\models\User.class
+com\sabitov\repository\UsersClient.class
 com\sabitov\servlets\AccountServlet.class
+com\sabitov\config\ApplicationConfig.class
