@@ -33,11 +33,21 @@ public class UserFilter implements Filter {
         String login=(String)req.getAttribute("login");
         String password=(String) req.getAttribute("password");
         List<User> users=usersClient.getAll();
+        req.setAttribute("listUsers", users);
         for (User user : users){
             if (user.getPassword().equals(password) && user.getLogin().equals(login)){
                 Cookie cookie = new Cookie(USER_COOKIE, "authentificated");
+                cookie.setMaxAge(COOKIE_MAX_AGE);
                 resp.addCookie(cookie);
             }
+        }
+
+        Cookie[] cookies=req.getCookies();
+        for(Cookie cookie : cookies){
+            if (cookie.getName()==USER_COOKIE && cookie.getValue()=="authentificated"){
+                req.getRequestDispatcher("users.jsp").forward(req,resp);
+            }
+
         }
         /*if (login!=null && password!=null){
             Cookie cookie = new Cookie(USER_COOKIE, login);
