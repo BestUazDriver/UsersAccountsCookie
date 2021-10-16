@@ -14,11 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebFilter("/*")
+import static com.sabitov.servlets.AccountServlet.USER_COOKIE;
+
+@WebFilter("/UserServlet")
 public class UserFilter implements Filter {
 
-    public static final String USER_COOKIE="authenthificationCookie";
-    public static final int COOKIE_MAX_AGE=60*60*24;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -26,53 +27,24 @@ public class UserFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-        UsersClient usersClient=context.getBean(UsersClient.class);
-        HttpServletRequest req=(HttpServletRequest) servletRequest;
-        HttpServletResponse resp=(HttpServletResponse) servletResponse;
-        String login=(String)req.getAttribute("login");
-        String password=(String) req.getAttribute("password");
-        List<User> users=usersClient.getAll();
-        req.setAttribute("listUsers", users);
-        for (User user : users){
-            if (user.getPassword().equals(password) && user.getLogin().equals(login)){
-                Cookie cookie = new Cookie(USER_COOKIE, "authentificated");
-                cookie.setMaxAge(COOKIE_MAX_AGE);
-                resp.addCookie(cookie);
-            }
-        }
 
-        Cookie[] cookies=req.getCookies();
-        for(Cookie cookie : cookies){
-            if (cookie.getName()==USER_COOKIE && cookie.getValue()=="authentificated"){
-                req.getRequestDispatcher("users.jsp").forward(req,resp);
-            }
+        HttpServletRequest req = (HttpServletRequest) servletRequest;
+        HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
-        }
-        /*if (login!=null && password!=null){
-            Cookie cookie = new Cookie(USER_COOKIE, login);
-           cookie.setMaxAge(COOKIE_MAX_AGE);
-            resp.addCookie(cookie);
-        }else{
-            Cookie[] cookies=req.getCookies();
-            for(Cookie cookie : cookies){
-                if (cookie.getName().equals(USER_LOGIN_COOKIE)){
-                    login=cookie.getValue();
+
+
+        if ((req.getCookies()) != null) {
+            Cookie[] cookies = req.getCookies();
+            for (Cookie cookie : cookies) {
+                if (cookie.getName() == USER_COOKIE) {
+                    filterChain.doFilter(req, resp);
                 }
-                if (cookie.getName().equals(USER_PASSWORD_COOKIE)){
-                    password= cookie.getValue();
-                }
-            }
-        }
 
-         */
-        req.setAttribute("login", login);
-        req.setAttribute("password", password);
-        filterChain.doFilter(req,resp);
+            }
+        }filterChain.doFilter(req, resp);
     }
 
     @Override
     public void destroy() {
-
     }
 }
