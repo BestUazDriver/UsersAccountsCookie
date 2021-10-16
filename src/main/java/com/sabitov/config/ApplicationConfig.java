@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.sql.DataSource;
 
 @Component
-@ComponentScan("ru.sab")
+@ComponentScan("com.sabitov")
 @PropertySource("classpath:application.properties")
 public class ApplicationConfig {
     @Autowired

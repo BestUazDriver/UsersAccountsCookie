@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.util.List;
 
-@Repository
+@Repository("usersClient")
 public class UsersClient {
     private JdbcTemplate jdbcTemplate;
 
